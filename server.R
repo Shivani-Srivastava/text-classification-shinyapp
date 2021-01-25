@@ -63,7 +63,12 @@ shinyServer(function(input,output,session){
     
   })
   
-  output$cf_matrix <- renderPrint({print(list0()[[1]])})
+  output$cf_matrix <- renderPrint({
+    if(is.null(input$file)){return(NULL)}
+    else{
+      print(list0()[[1]])
+    }
+   })
   
   output$tokens <- renderUI({selectInput("y_token","select class for top 20 tokens",choices = as.character(sort(unique(dataset()[,input$y]))))})
   
