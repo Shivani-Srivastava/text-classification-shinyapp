@@ -1,0 +1,21 @@
+
+# load new_hs_code from folder hscode_ask_06_13.RDS
+new_hs_copy <- new_hs_code[new_hs_code$HS_code_count!=0,]
+new_hs_copy$HS_Code <- str_replace_all(new_hs_copy$HS_Code,'/NA','')
+
+new_hs_copy$HS_Code <- str_replace_all(new_hs_copy$HS_Code,'\\.','')
+new_hs_copy$HS_Code <- str_replace_all(new_hs_copy$HS_Code,' ','')
+
+#k <- str_extract(new_hs_copy$HS_Code,'\\d+')
+#k
+
+new_hs_copy$target <- str_extract(new_hs_copy$HS_Code,'\\d+')
+
+#new_hs_model_data <- new_hs_copy[,c(10,49)]
+
+
+
+new_hs_copy$target_6 <- ifelse(nchar(new_hs_copy$target)>6, substr(new_hs_copy$target, 1, 6) ,new_hs_copy$target)
+new_hs_copy$target_4 <- ifelse(nchar(new_hs_copy$target)>4, substr(new_hs_copy$target, 1, 4) ,new_hs_copy$target)
+
+write.csv(new_hs_copy,'new_hs_model_data.csv',row.names = FALSE)
