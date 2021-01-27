@@ -118,6 +118,15 @@ shinyServer(function(input,output,session){
           autoWidth = TRUE,
           columnDefs = list(list(width = '200px', targets = "_all"))
         ))
+  
+  
+  
+  output$downloadData1 <- downloadHandler(
+    filename = function() { paste0(input$downloads,".csv") },
+    content = function(file) {
+      writeLines(readLines(paste0("data\\",input$downloads,".csv")), file)
+    }
+  )
   # output$wordcloud <- renderPlot({
   #   if(is.null(input$file)){return(NULL)}
   #   else{
