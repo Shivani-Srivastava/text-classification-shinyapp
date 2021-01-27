@@ -6,6 +6,6 @@ suppressPackageStartupMessages({
   if (!require(shinyWidgets)) {install.packages("shinyWidgets")}; library(shinyWidgets)
   if (!require(DT)) {install.packages("DT")}; library(DT)
   if (!require(shiny)) {install.packages("shiny")}; library(shiny)
-  
+  if (!require(wordcloud)) {install.packages("wordcloud")}; library(wordcloud)
   
 })
