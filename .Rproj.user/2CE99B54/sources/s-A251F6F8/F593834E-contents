@@ -1,0 +1,19 @@
+if (interactive ()) {
+  library ("shiny") 
+  library ("shinyWidgets") 
+  ui <- fluidPage (
+    tags $ h1 ("Confirm sweet alert"), 
+    actionButton (inputId = "launch", 
+                  label = "Launch confirmation dialog"), 
+    verbatimTextOutput (outputId = "res"), 
+    uiOutput (outputId = "count"))
+  
+  server <- function (input, output, session) {
+    # Launch sweet alert confirmation 
+    observeEvent (input$launch, 
+                  { confirmSweetAlert (session = session, 
+                                       inputId = "myconfirmation",
+                                       title = "Want to confirm ?")
+                  })
+  }
+}

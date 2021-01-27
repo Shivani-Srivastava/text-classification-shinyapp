@@ -7,6 +7,15 @@ shinyServer(function(input,output,session){
     }
   })
   
+  dataset <- eventReactive(input$load,{
+    if(is.null(input$file)){
+      df = read.csv(paste0("data\\",input$sample,".csv") ,header=TRUE, sep = ",", stringsAsFactors = F)
+      
+      }
+  }
+    
+  )
+  
   cols <- reactive({colnames(dataset())})
   
   output$inp_var <- renderUI({
@@ -47,28 +56,40 @@ shinyServer(function(input,output,session){
                   
         
    
-
+  train_flag <-observeEvent(input$apply, {
+     ask_confirmation(
+      inputId = "myconfirmation1",
+      type = "info",
+      title = "Do you want to train ?",
+      text = "Make sure correct variables are selected"
+    )
+  })
   
   
-  list0 <- eventReactive(input$apply, {
-    #list0 = reactive({
-    textclassif_nb(dataset(), # input file with text and Y colms
-                   y_n0=input$y,     # position of Y colm in the input DF 
-                   x_n0=input$x,     # position of X or text colm
-                   trg_propn = input$tr_per/100,   # default and slider for user input
-                   n00 = 100,
-                   user_stpw = unlist(strsplit(input$stopw,",")),
-                   rem_punct = input$rem_punct
-                   
-                   #model=input$algo
-    )   # num_term coeffs to display for each class  
+  list0 <- eventReactive(input$myconfirmation1, {
+    if (isTRUE(input$myconfirmation1) & !is.null(input$file)){
+      #list0 = reactive({
+      textclassif_nb(dataset(), # input file with text and Y colms
+                     y_n0=input$y,     # position of Y colm in the input DF 
+                     x_n0=input$x,     # position of X or text colm
+                     trg_propn = input$tr_per/100,   # default and slider for user input
+                     n00 = 100,
+                     user_stpw = unlist(strsplit(input$stopw,",")),
+                     rem_punct = input$rem_punct
+                     
+                     #model=input$algo
+      )   # num_term coeffs to display for each class  
+    }else{
+      NULL
+    }
+    
     
     #})
     
   })
   
   output$cf <- renderPrint({
-    if(input$apply==0){return(NULL)}
+    if(!isTRUE(input$myconfirmation1)){return(NULL)}
     else{
       print(list0()[[1]])
     }

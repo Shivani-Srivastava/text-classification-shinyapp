@@ -11,9 +11,12 @@ shinyUI(fluidPage(
   
   # Input in sidepanel:
   sidebarPanel(
-    
+    selectInput("sample","Load Sample Data",choices = sub('\\.csv$', '',list.files('data'))),
+    actionButton("load","Load Data"),
+    hr(),
     fileInput("file", "Upload Data"),
    # h5("select X"),
+   hr(),
     uiOutput('inp_var'),
     
    # h5("select Y"),
@@ -24,7 +27,7 @@ shinyUI(fluidPage(
    # h5("select training data (in percentage)"),
     sliderInput("tr_per",label = "select training data (in percentage)",min = 0,max = 100,value = 70,step = 1),
    
-    
+    hr(),
     #h5("select classification algorithm"),
     selectInput("algo",label = "select algorithm",choices = c("Naive Bayes"="nb","Logistic Regression"="lr")),
     actionButton('plotwc',"Plot WordCloud"),
