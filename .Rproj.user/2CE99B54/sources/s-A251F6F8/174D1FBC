@@ -3,7 +3,7 @@
     "path": "D:/R Projects/text-classification-shinyapp/global.R",
     "project_path": "global.R",
     "type": "r_source",
-    "hash": "0",
+    "hash": "122730508",
     "contents": "",
     "dirty": false,
     "created": 1611389211264.0,
@@ -11,15 +11,15 @@
     "relative_order": 5,
     "properties": {
         "tempName": "Untitled1",
-        "cursorPosition": "74,0",
-        "scrollLine": "0"
+        "cursorPosition": "77,69",
+        "scrollLine": "51"
     },
     "folds": "",
-    "lastKnownWriteTime": 1611408699,
+    "lastKnownWriteTime": 1611721359,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1611408699439,
+    "last_content_update": 1611721359608,
     "read_only": false,
     "read_only_alternatives": []
 }

@@ -17,14 +17,18 @@ shinyUI(fluidPage(
     uiOutput('inp_var'),
     
    # h5("select Y"),
-    uiOutput('tar_var'),
+   uiOutput('tar_var'),
     
+   textInput("stopw", ("Enter stop words separated by comma(,)"), value = "will,can"),
+   checkboxInput("rem_punct","Remove Punctuation",value = TRUE),
    # h5("select training data (in percentage)"),
     sliderInput("tr_per",label = "select training data (in percentage)",min = 0,max = 100,value = 70,step = 1),
+   
     
     #h5("select classification algorithm"),
     selectInput("algo",label = "select algorithm",choices = c("Naive Bayes"="nb","Logistic Regression"="lr")),
-    actionButton("apply","Apply Changes")
+    actionButton('plotwc',"Plot WordCloud"),
+    actionButton("apply","Train Model")
   
   ),
   
@@ -53,7 +57,7 @@ shinyUI(fluidPage(
                 )
                 ,
                
-                tabPanel("Summary Stats",
+                tabPanel("Data",
                          h4("Review uploaded data"),
                          DT::dataTableOutput("sample_data"),br(), 
                          h4("Word Cloud"),
@@ -75,14 +79,37 @@ shinyUI(fluidPage(
                          
                          plotOutput("wordcloud",height = 700, width = 700),br(),
                          #textInput("in",label = "text"),
-                         h4("Weights Distribution of Wordcloud"),
-                         DT::dataTableOutput("dtmsummary1")),
+                         
+                        ),
                         tabPanel("Training Report",
                                  h4("confusion matrix"),
-                                 verbatimTextOutput("cf_matrix"),
+                                 plotOutput("cf_matrix"),
+                                 hr(),
+                                 verbatimTextOutput('cf'),
                                  hr(),
                                  uiOutput("tokens"),
-                                 dataTableOutput("token_table")
+                                 
+                                 dropdownButton(
+                                   
+                                   tags$h3("List of Inputs"),
+                                   
+                                   sliderInput(inputId = 'maxword',
+                                               label = 'Max words to display',
+                                               value = 20,
+                                               min = 1,
+                                               max = 100),
+                                   
+                                   circle = TRUE, status = "danger",
+                                   icon = icon("gear"), width = "300px",
+                                   
+                                   tooltip = tooltipOptions(title = "Click to see inputs !")
+                                 ),
+                                 
+                                 plotOutput("token_wc",height = 700, width = 700),br(),
+                                 
+                                 
+                                  dataTableOutput("token_table")
+                                 
                                 )
     ),
     

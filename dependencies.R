@@ -5,7 +5,7 @@ suppressPackageStartupMessages({
   if (!require(quanteda.textmodels)) {install.packages("quanteda.textmodels")}; library(quanteda.textmodels)
   if (!require(shinyWidgets)) {install.packages("shinyWidgets")}; library(shinyWidgets)
   if (!require(DT)) {install.packages("DT")}; library(DT)
+  if (!require(shiny)) {install.packages("shiny")}; library(shiny)
   
   
- 
 })

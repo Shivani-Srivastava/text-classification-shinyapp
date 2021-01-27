@@ -5,15 +5,19 @@ textclassif_nb <- function(test_csv, # input file with text and Y colms
                            x_n0,     # position of X or text colm. User input
                            trg_propn = 0.70,   # default and slider for user input
                            n00 = 20,
-                           model="nb"){   # num_term coeffs to display for each class 
-  
+                           model="nb",
+                           user_stpw = stopw_list,
+                           rem_punct = punct
+                           
+                           ){   # num_term coeffs to display for each class 
+  set.seed(123)
   x = test_csv[, x_n0]
   y = test_csv[, y_n0]
   
   # building DFM
   test_corpus <- corpus(x) # constructing a corpus
-  dfm_test = test_corpus %>% tokens(., remove_punct = TRUE) %>% # tokenize
-    tokens_select(., pattern = stopwords("en"), selection = "remove") %>% # pre-proc
+  dfm_test = test_corpus %>% tokens(., remove_punct = rem_punct) %>% # tokenize
+    tokens_select(., pattern = c(stopwords("en"),user_stpw), selection = "remove") %>% # pre-proc
     dfm(.) %>% dfm_trim(., min_termfreq = 5)  # build DFM
   
   # generate 70% sample for training, sample numbers without replacement
@@ -45,7 +49,7 @@ textclassif_nb <- function(test_csv, # input file with text and Y colms
   actual_class <- y[id_test]; length(actual_class)  # Y value must be taken based on user-input or default
   predicted_class <- predict(tmod_nb, newdata = dfm_matched); # head(predicted_class)
   
-  tab_class <- table(actual_class, predicted_class); # tab_class  # confusion matrix
+  tab_class <- table(factor(actual_class,sort(unique(y))), factor(predicted_class,sort(unique(y)))); # tab_class  # confusion matrix
   
   if (nrow(tab_class) == ncol(tab_class)){ outp0 = confusionMatrix(tab_class, mode = "everything")
   } else {outp0 = tab_class}
@@ -68,6 +72,8 @@ textclassif_nb <- function(test_csv, # input file with text and Y colms
     colnames(df00) = sapply(colnames(df00), function(x) {paste0(x, "_", i0)}) %>% as.character(.)
     
     list00[[i0]] = df00      } # i0 loop ends
+  
+  list00 <- setNames(list00,rownames(classif_probs))
   
   df0 = as.data.frame(list00); df0  # this becomes output for display
   
