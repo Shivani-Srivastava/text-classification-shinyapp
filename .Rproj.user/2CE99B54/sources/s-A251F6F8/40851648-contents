@@ -1,20 +1,27 @@
 shinyServer(function(input,output,session){
   set.seed=12345
-  dataset <- reactive({
-    if(is.null(input$file)){return(NULL)}
+  dataset <- eventReactive(input$load,{
+    if(is.null(input$file)){
+      
+      df = read.csv(paste0("data\\",input$sample,".csv") ,header=TRUE, sep = ",", stringsAsFactors = F)
+      return(df)
+      
+      }
     else{
       df = read.csv(input$file$datapath ,header=TRUE, sep = ",", stringsAsFactors = F)
+      
+      return(df)
     }
   })
   
-  dataset <- eventReactive(input$load,{
-    if(is.null(input$file)){
-      df = read.csv(paste0("data\\",input$sample,".csv") ,header=TRUE, sep = ",", stringsAsFactors = F)
-      
-      }
-  }
-    
-  )
+  # dataset <- eventReactive(input$load,{
+  #   if(is.null(input$file)){
+  # 
+  #   
+  #     }
+  # }
+  # 
+  # )
   
   cols <- reactive({colnames(dataset())})
   

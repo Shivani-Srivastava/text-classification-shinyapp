@@ -12,9 +12,11 @@ shinyUI(fluidPage(
   # Input in sidepanel:
   sidebarPanel(
     selectInput("sample","Load Sample Data",choices = sub('\\.csv$', '',list.files('data'))),
-    actionButton("load","Load Data"),
-    hr(),
+    p("OR"),
     fileInput("file", "Upload Data"),
+    actionButton("load","Load Data"),
+    
+    
    # h5("select X"),
    hr(),
     uiOutput('inp_var'),

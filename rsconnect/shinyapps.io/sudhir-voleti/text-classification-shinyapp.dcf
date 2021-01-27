@@ -1,0 +1,12 @@
+name: text-classification-shinyapp
+title: text-classification-shinyapp
+username:
+account: sudhir-voleti
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 3531553
+bundleId: 4149134
+url: https://sudhir-voleti.shinyapps.io/text-classification-shinyapp/
+when: 1611746433.96734
+asMultiple: FALSE
+asStatic: FALSE
