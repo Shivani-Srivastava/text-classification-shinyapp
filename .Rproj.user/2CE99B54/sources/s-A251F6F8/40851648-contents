@@ -47,13 +47,13 @@ shinyServer(function(input,output,session){
 
  wc <-  eventReactive(input$plotwc,{
     
-      if(is.null(input$file)){return(NULL)}
-      else{
+     # if(is.null(input$file)){return(NULL)}
+     # else{
         dfm <- corpus(dataset()[,input$x]) %>% 
           dfm(remove = c(stopwords('english'),unlist(strsplit(input$stopw,","))), remove_punct = input$rem_punct) %>%
           dfm_trim(min_termfreq = input$minword, verbose = FALSE)
           textplot_wordcloud(dfm,color = c('red', 'pink', 'green', 'purple', 'orange', 'blue'))
-      }
+    #  }
   
     
   })          
@@ -74,7 +74,7 @@ shinyServer(function(input,output,session){
   
   
   list0 <- eventReactive(input$myconfirmation1, {
-    if (isTRUE(input$myconfirmation1) & !is.null(input$file)){
+    if (isTRUE(input$myconfirmation1)){
       #list0 = reactive({
       textclassif_nb(dataset(), # input file with text and Y colms
                      y_n0=input$y,     # position of Y colm in the input DF 
@@ -129,9 +129,9 @@ shinyServer(function(input,output,session){
   output$token_wc <- renderPlot({
     t <- list0()[[2]][[input$y_token]]
     names(t) <- c("tokens","probability")
-    wordcloud(words = t$tokens, freq = t$probability, 
+  wordcloud:: wordcloud(words = t$tokens, freq = t$probability, 
               max.words=input$maxword, random.order=FALSE, rot.per=0.35, 
-              colors=brewer.pal(8, "Dark2"))
+              colors= RColorBrewer::brewer.pal(8, "Dark2"))
     
   })
   

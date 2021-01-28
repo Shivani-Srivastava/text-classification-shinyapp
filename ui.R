@@ -4,6 +4,9 @@ library(caret)
 library(quanteda.textmodels)
 library(shinyWidgets)
 library(DT)
+library(e1071)
+library(wordcloud)
+library(RColorBrewer)
 
 shinyUI(fluidPage(
   

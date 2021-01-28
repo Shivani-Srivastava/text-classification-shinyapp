@@ -3,7 +3,7 @@
     "path": "D:/R Projects/text-classification-shinyapp/dependencies.R",
     "project_path": "dependencies.R",
     "type": "r_source",
-    "hash": "1322772938",
+    "hash": "3725735919",
     "contents": "",
     "dirty": false,
     "created": 1611385745812.0,
@@ -11,15 +11,15 @@
     "relative_order": 4,
     "properties": {
         "tempName": "Untitled1",
-        "cursorPosition": "11,0",
+        "cursorPosition": "13,0",
         "scrollLine": "0"
     },
     "folds": "",
-    "lastKnownWriteTime": 1611725374,
+    "lastKnownWriteTime": 1611802063,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1611725374144,
+    "last_content_update": 1611802063482,
     "read_only": false,
     "read_only_alternatives": []
 }
