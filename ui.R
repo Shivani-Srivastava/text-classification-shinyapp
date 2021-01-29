@@ -7,8 +7,8 @@ library(DT)
 library(e1071)
 library(wordcloud)
 library(RColorBrewer)
-library(lexicon)
-
+#library(lexicon)
+hash_lemmas<-readRDS('hash_lemmas.rds')
 shinyUI(fluidPage(
   
   titlePanel(title=div(img(src="logo.png",align='right'),"Text Classification")),

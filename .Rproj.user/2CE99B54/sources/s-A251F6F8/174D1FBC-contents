@@ -15,7 +15,7 @@
 #   tokens <- tokens_ngrams(tokens,n=1:n_grams)
 #   return(tokens)
 # }
-
+hash_lemmas<-readRDS('hash_lemmas.rds')
 #------Function 1: Train Test Split------
 train_test_split <- function(df,x_n0,y_n0,trg_propn){
   set.seed(123)
