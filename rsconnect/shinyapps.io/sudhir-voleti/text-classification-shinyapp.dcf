@@ -5,8 +5,9 @@ account: sudhir-voleti
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 3531553
-bundleId: 4149559
+bundleId: 4156319
 url: https://sudhir-voleti.shinyapps.io/text-classification-shinyapp/
-when: 1611754630.02794
+when: 1611897071.59831
 asMultiple: FALSE
 asStatic: FALSE
+ignoredFiles: quanteda-NB-text-classif.html|quanteda NB text classif.Rmd

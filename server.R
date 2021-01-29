@@ -15,6 +15,9 @@ shinyServer(function(input,output,session){
     }
   })
   
+  output$dim <- renderText({
+    paste0("Uploaded data has ",nrow(dataset())," observations and ",ncol(dataset())," columns ")
+  })
 
   
   cols <- reactive({colnames(dataset())})

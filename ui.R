@@ -124,7 +124,10 @@ shinyUI(fluidPage(
                
                 tabPanel("Data",
                          h4("Review uploaded data"),
-                         dataTableOutput("sampleData"),br(), 
+                         h5("Data Dimensions"),
+                         verbatimTextOutput('dim'),
+                         hr(),
+                         dataTableOutput("sampleData"),hr(), 
                          h4("Word Cloud"),
                          dropdownButton(
                            
