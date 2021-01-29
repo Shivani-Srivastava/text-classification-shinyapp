@@ -17,3 +17,29 @@ if (interactive ()) {
                   })
   }
 }
+
+
+build_tokens <- function(data,n_grams=1){
+  tokens <- tokens(
+    data,
+    remove_punct = TRUE,
+    remove_numbers = TRUE,
+    remove_symbols = TRUE,
+    split_hyphens = TRUE,
+  )
+  
+  tokens <- tokens_tolower(tokens)
+  tokens <- tokens_select(tokens,stopwords(),selection="remove")
+  tokens <- tokens_wordstem(tokens,language="english")
+  tokens <- tokens_ngrams(tokens,n=1:n_grams)
+  return(tokens)
+}
+
+build_dfm <- function(data,n_grams=1){
+  tokens <- build_tokens(data,n_grams)
+  return(dfm(tokens))
+}
+
+
+
+train.dfm <- build_dfm(df$review)

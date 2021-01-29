@@ -7,6 +7,7 @@ library(DT)
 library(e1071)
 library(wordcloud)
 library(RColorBrewer)
+library(lexicon)
 
 shinyUI(fluidPage(
   
@@ -14,29 +15,84 @@ shinyUI(fluidPage(
   
   # Input in sidepanel:
   sidebarPanel(
-    selectInput("sample","Load Sample Data",choices = sub('\\.csv$', '',list.files('data'))),
+    
+    pickerInput(
+      inputId = "sample",
+      label = "Load Sample Data", 
+      choices = sub('\\.csv$', '',list.files('data')), 
+      choicesOpt = list(icon = c("plane-departure", "amazon", 'twitter','refresh')),
+      options =list(`live-search` = TRUE,style = "btn-primary")
+    ),
+    
+  
+    
+    #selectInput("sample","Load Sample Data",choices = sub('\\.csv$', '',list.files('data'))),
     p("OR"),
     fileInput("file", "Upload Data"),
-    actionButton("load","Load Data"),
-    
+    #actionButton("load","Load Data"),
+    actionButton(
+      inputId = "load",
+      label = "Load Data", 
+      style = "color: #fff; background-color: #337ab7; border-color: #2e6da4",
+      color = "default",size = 's',icon=icon('cloud-upload-alt')
+      ),
     
    # h5("select X"),
    hr(),
-    uiOutput('inp_var'),
-    
+   strong(p("Variable Selection")),
+   uiOutput('inp_var'),
    # h5("select Y"),
    uiOutput('tar_var'),
-    
+   hr(),
+   strong(p("Data Preprocessing")),
+   helpText("Note: Remove symbols does'nt remove @ from twitter handles"),
+   
+   fluidRow(
+            column(4,align="left",
+                   prettyCheckbox('remove_punct', 'Remove Punctuation', value = TRUE,status = 'primary',icon = icon("check")),
+                   prettyCheckbox('split_hyphens', 'Split Hyphen', value = TRUE,status = 'primary',icon = icon("check"))),
+            column(4,align="left",
+                   prettyCheckbox('remove_symbols', 'Remove Symbols', value = TRUE,status = 'primary',icon = icon("check")),
+                   prettyCheckbox('stem', 'Stemming', value = FALSE,status = 'primary',icon = icon("check"))),
+            column(4,align="left",
+                   prettyCheckbox('remove_numbers', 'Remove Numbers', value = TRUE,status = 'primary',icon = icon("check")),
+                   prettyCheckbox('lemma', 'Lemmatization', value = FALSE,status = 'primary',icon = icon("check"))
+                   ),
+                ),
+   
+   
    textInput("stopw", ("Enter stop words separated by comma(,)"), value = "will,can"),
-   checkboxInput("rem_punct","Remove Punctuation",value = TRUE),
+   #actionButton('plotwc',"Plot WordCloud"),
+   actionButton(
+     inputId = "plotwc",
+     label = "Plot WordCloud",
+     style = "color: #fff; background-color: #337ab7; border-color: #2e6da4",
+     color = "default",size = 's'),
+  # ),
+   
+   
+   
    # h5("select training data (in percentage)"),
+   hr(),
+   strong(p("Train-Test Split")),
     sliderInput("tr_per",label = "select training data (in percentage)",min = 0,max = 100,value = 70,step = 1),
    
     hr(),
     #h5("select classification algorithm"),
+    strong(p("Model Selection")),
     selectInput("algo",label = "select algorithm",choices = c("Naive Bayes"="nb","Logistic Regression"="lr")),
-    actionButton('plotwc',"Plot WordCloud"),
-    actionButton("apply","Train Model")
+    
+    #actionButton("apply","Train Model"),
+    
+  actionButton(
+    inputId = "apply",
+    label = "Train Model", 
+    style = "color: #fff; background-color: #337ab7; border-color: #2e6da4",
+    color = "default",size = 's',icon=icon('cogs')
+  ),
+  
+  
+     progressBar(id = "pb6", value = 0, status = "success", size = "xs")
   
   ),
   
@@ -68,11 +124,11 @@ shinyUI(fluidPage(
                
                 tabPanel("Data",
                          h4("Review uploaded data"),
-                         DT::dataTableOutput("sample_data"),br(), 
+                         dataTableOutput("sampleData"),br(), 
                          h4("Word Cloud"),
                          dropdownButton(
                            
-                           tags$h3("List of Inputs"),
+                          tags$h3("List of Inputs"),
                            
                           sliderInput(inputId = 'minword',
                                        label = 'Min Term Frequency',
@@ -91,7 +147,8 @@ shinyUI(fluidPage(
                          
                         ),
                         tabPanel("Training Report",
-                                 h4("confusion matrix"),
+                                 h4("Confusion Matrix"),
+                                 textOutput("cf_text"),
                                  plotOutput("cf_matrix"),
                                  hr(),
                                  verbatimTextOutput('cf'),

@@ -1,5 +1,6 @@
 shinyServer(function(input,output,session){
   set.seed=12345
+  
   dataset <- eventReactive(input$load,{
     if(is.null(input$file)){
       
@@ -14,44 +15,55 @@ shinyServer(function(input,output,session){
     }
   })
   
-  # dataset <- eventReactive(input$load,{
-  #   if(is.null(input$file)){
-  # 
-  #   
-  #     }
-  # }
-  # 
-  # )
+
   
   cols <- reactive({colnames(dataset())})
   
   output$inp_var <- renderUI({
-    selectInput("x","Select X",choices = cols())
+    
+    pickerInput(
+      inputId = "x",
+      label = "Select X", 
+      choices = cols(),
+      options = list(
+        `live-search` = TRUE,style = "btn-primary")
+    )
+    
+    #selectInput("x","Select X",choices = cols())
   })
   
   output$tar_var <- renderUI({
-    
     x <- match(input$x,cols())
     y_cols <- cols()[-x]
-    
-    cols_y <- 
-    selectInput("y","Select Y",choices = y_cols)
+    #cols_y <- 
+    pickerInput(
+      inputId = "y",
+      label = "Select Y", 
+      choices = y_cols,
+      options = list(
+        `live-search` = TRUE,style = "btn-primary")
+    )
+   # selectInput("y","Select Y",choices = y_cols)
   })
   
   
-  output$sample_data <- renderDataTable({
-    head(dataset(),5)
+  output$sampleData <- renderDataTable({
+    head(dataset(),4)
   })
   
   
 
- wc <-  eventReactive(input$plotwc,{
+ wc <- eventReactive(input$plotwc,{
     
      # if(is.null(input$file)){return(NULL)}
      # else{
-        dfm <- corpus(dataset()[,input$x]) %>% 
-          dfm(remove = c(stopwords('english'),unlist(strsplit(input$stopw,","))), remove_punct = input$rem_punct) %>%
-          dfm_trim(min_termfreq = input$minword, verbose = FALSE)
+          dfm <- build_dfm(dataset()[,input$x],
+                           user_list = unlist(strsplit(input$stopw,",")),
+                           remove_punct = input$remove_punct,
+                           remove_numbers = input$remove_numbers,
+                           remove_symbols = input$remove_symbols,
+                           split_hyphens = input$split_hyphens,stem = input$stem,
+                           lemma=input$lemma)%>%dfm_trim(input$minword)
           textplot_wordcloud(dfm,color = c('red', 'pink', 'green', 'purple', 'orange', 'blue'))
     #  }
   
@@ -61,7 +73,8 @@ shinyServer(function(input,output,session){
   output$wordcloud <- renderPlot({wc()})
                
                   
-        
+  values <- reactiveValues(train_size=NULL)
+  values <- reactiveValues(test_size=NULL)
    
   train_flag <-observeEvent(input$apply, {
      ask_confirmation(
@@ -75,17 +88,61 @@ shinyServer(function(input,output,session){
   
   list0 <- eventReactive(input$myconfirmation1, {
     if (isTRUE(input$myconfirmation1)){
+      #df <- dataset()
+      updateProgressBar(session = session, id = "pb6", value = 10)
+      tab <- table(dataset()[,input$y])
+      df <- dataset()[dataset()[,input$y] %in% names(tab)[tab>5],]
+      
+      # train test split
+      train_test <- train_test_split(df,
+                                     x_n0 = input$x,
+                                     y_n0 = input$y,
+                                     trg_propn = input$tr_per/100)
+      
+      train <- train_test[[1]]
+      test <- train_test[[2]]
+      
+      
+      
+      updateProgressBar(session = session, id = "pb6", value = 30)
+      
+      # build dfm
+      train.dfm <- build_dfm(train[,input$x],
+                             user_list = unlist(strsplit(input$stopw,",")),
+                             remove_punct = input$remove_punct,
+                             remove_numbers = input$remove_numbers,
+                             remove_symbols = input$remove_symbols,
+                             split_hyphens = input$split_hyphens,stem = input$stem,
+                             lemma=input$lemma)%>%dfm_trim(min_termfreq = 5)
+      
+      test.dfm <- build_dfm(test[,input$x],
+                            user_list = unlist(strsplit(input$stopw,",")),
+                            remove_punct = input$remove_punct,
+                            remove_numbers = input$remove_numbers,
+                            remove_symbols = input$remove_symbols,
+                            split_hyphens = input$split_hyphens,stem = input$stem,
+                            lemma=input$lemma)%>%dfm_trim(min_termfreq = 5)
+      
+      values[['train_size']] <- dim(train.dfm)
+      values[['test_size']] <- dim(test.dfm)
+      
+      updateProgressBar(session = session, id = "pb6", value = 60)
+      # train & evaluate
+      l = train_and_evaluate_model(train.dfm,train[,input$y],test.dfm,test[,input$y],model='nb',n00=20)
+      
+      updateProgressBar(session = session, id = "pb6", value = 100)
+      return(l)
       #list0 = reactive({
-      textclassif_nb(dataset(), # input file with text and Y colms
-                     y_n0=input$y,     # position of Y colm in the input DF 
-                     x_n0=input$x,     # position of X or text colm
-                     trg_propn = input$tr_per/100,   # default and slider for user input
-                     n00 = 100,
-                     user_stpw = unlist(strsplit(input$stopw,",")),
-                     rem_punct = input$rem_punct
+      # textclassif_nb(dataset(), # input file with text and Y colms
+      #                y_n0=input$y,     # position of Y colm in the input DF 
+      #                x_n0=input$x,     # position of X or text colm
+      #                trg_propn = input$tr_per/100,   # default and slider for user input
+      #                n00 = 100,
+      #                stopw_list = unlist(strsplit(input$stopw,",")),
+                    
                      
                      #model=input$algo
-      )   # num_term coeffs to display for each class  
+        # num_term coeffs to display for each class  
     }else{
       NULL
     }
@@ -94,6 +151,12 @@ shinyServer(function(input,output,session){
     #})
     
   })
+  
+  
+  output$cf_text <- renderText({
+    paste0("Model is trained on ",values[['train_size']][1],' records and ',values[['train_size']][2], ' features.\n','Following results are based on testing  ',values[['test_size']][1],' unseen records')
+  })
+  
   
   output$cf <- renderPrint({
     if(!isTRUE(input$myconfirmation1)){return(NULL)}
@@ -112,7 +175,7 @@ shinyServer(function(input,output,session){
      # print(list0()[[1]][1])
      # print(list0()[[1]][['table']])
       confusion.data <- as.data.frame(list0()[[1]][['table']])
-      ggplot(confusion.data, aes(x=Var2, y=Var1, fill=Freq)) +
+      ggplot(confusion.data, aes(x=predicted_class, y=actual_class, fill=Freq)) +
         geom_tile() + theme_bw() + coord_equal() +
         scale_fill_distiller(palette="Greens", direction=1) +
         guides(fill=F) + # removing legend for `fill`
@@ -143,6 +206,7 @@ shinyServer(function(input,output,session){
         names(t) <- c("tokens","probability")
         t
         },options = list(
+          pageLength=10,
           autoWidth = TRUE,
           columnDefs = list(list(width = '200px', targets = "_all"))
         ))
