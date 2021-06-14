@@ -10,7 +10,7 @@ shinyServer(function(input,output,session){
       }
     else{
       df = read.csv(input$file$datapath ,header=TRUE, sep = ",", stringsAsFactors = F)
-      
+      #df <- df %>%drop_na()
       return(df)
     }
   })
@@ -29,7 +29,7 @@ shinyServer(function(input,output,session){
       label = "Select X", 
       choices = cols(),
       options = list(
-        `live-search` = TRUE,style = "btn-primary")
+        `live-search` = FALSE,style = "btn-primary")
     )
     
     #selectInput("x","Select X",choices = cols())
@@ -44,7 +44,7 @@ shinyServer(function(input,output,session){
       label = "Select Y", 
       choices = y_cols,
       options = list(
-        `live-search` = TRUE,style = "btn-primary")
+        `live-search` = FALSE,style = "btn-primary")
     )
    # selectInput("y","Select Y",choices = y_cols)
   })
@@ -54,6 +54,10 @@ shinyServer(function(input,output,session){
     head(dataset(),4)
   })
   
+  output$y_dis <- renderPrint({
+    req(dataset())
+    prop.table(table(dataset()[,input$y]))
+  })
   
 
  wc <- eventReactive(input$plotwc,{

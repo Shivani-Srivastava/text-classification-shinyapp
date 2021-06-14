@@ -10,7 +10,7 @@ library(RColorBrewer)
 #library(lexicon)
 hash_lemmas<-readRDS('hash_lemmas.rds')
 shinyUI(fluidPage(
-  
+  title = "Text Classification",
   titlePanel(title=div(img(src="logo.png",align='right'),"Text Classification")),
   
   # Input in sidepanel:
@@ -123,10 +123,12 @@ shinyUI(fluidPage(
                 ,
                
                 tabPanel("Data",
-                         h4("Review uploaded data"),
                          h5("Data Dimensions"),
                          verbatimTextOutput('dim'),
+                         h5("Distribution of Target(Y)"),
+                         verbatimTextOutput('y_dis'),
                          hr(),
+                         h5("Sample dataset"),
                          dataTableOutput("sampleData"),hr(), 
                          h4("Word Cloud"),
                          dropdownButton(
