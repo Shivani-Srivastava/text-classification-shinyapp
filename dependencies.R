@@ -10,6 +10,8 @@ suppressPackageStartupMessages({
   if (!require(e1071)) {install.packages("e1071")}; library(e1071)
   if (!require(RColorBrewer)) {install.packages("RColorBrewer")}; library(RColorBrewer)
   if (!require(tidyr)) {install.packages("tidyr")}; library(tidyr)
+  if (!require(quanteda.textplots)) {install.packages("quanteda.textplots")}; library(quanteda.textplots)
+  
   
   #if (!require(lexion)) {install.packages("lexion")}; library(lexion)
   
