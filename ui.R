@@ -16,18 +16,9 @@ shinyUI(fluidPage(
   # Input in sidepanel:
   sidebarPanel(
     
-    pickerInput(
-      inputId = "sample",
-      label = "Load Sample Data", 
-      choices = sub('\\.csv$', '',list.files('data')), 
-      choicesOpt = list(icon = c("plane-departure", "amazon", 'twitter','refresh')),
-      options =list(`live-search` = TRUE,style = "btn-primary")
-    ),
     
   
     
-    #selectInput("sample","Load Sample Data",choices = sub('\\.csv$', '',list.files('data'))),
-    p("OR"),
     fileInput("file", "Upload Data"),
     #actionButton("load","Load Data"),
     actionButton(
