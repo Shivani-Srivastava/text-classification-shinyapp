@@ -71,7 +71,7 @@ shinyServer(function(input,output,session){
                            remove_symbols = input$remove_symbols,
                            split_hyphens = input$split_hyphens,stem = input$stem,
                            lemma=input$lemma)%>%dfm_trim(input$minword)
-          quanteda::textplot_wordcloud(dfm,color = c('red', 'pink', 'green', 'purple', 'orange', 'blue'))
+          textplot_wordcloud(dfm,color = c('red', 'pink', 'green', 'purple', 'orange', 'blue'))
     #  }
   
     
